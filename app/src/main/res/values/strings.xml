@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">智慧生活</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- 主界面 -->
+    <string name="setting">设置</string>
+</resources>

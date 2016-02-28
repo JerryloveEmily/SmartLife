@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+    >
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_content_pager"
+        android:layout_width="match_parent"
+        android:background="@android:color/white"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </android.support.v4.view.ViewPager>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/divide"/>
+
+    <RadioGroup
+        android:id="@+id/tab_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#f2f2f2"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        >
+
+        <RadioButton
+            android:id="@+id/tab_home"
+            style="@style/radioButtonStyle"
+            android:checked="true"
+            android:drawableTop="@drawable/rb_home_selector"
+            android:text="首页"
+            />
+
+        <RadioButton
+            android:id="@+id/tab_news"
+            style="@style/radioButtonStyle"
+            android:drawableTop="@drawable/rb_newscenter_selector"
+            android:text="新闻中心"
+            />
+
+        <RadioButton
+            android:id="@+id/tab_smartservice"
+            style="@style/radioButtonStyle"
+            android:drawableTop="@drawable/rb_smartservice_selector"
+            android:text="智能服务"
+            />
+
+        <RadioButton
+            android:id="@+id/tab_govaffairs"
+            style="@style/radioButtonStyle"
+            android:drawableTop="@drawable/rb_govaffairs_selector"
+            android:text="政务"
+            />
+
+        <RadioButton
+            android:id="@+id/tab_setting"
+            style="@style/radioButtonStyle"
+            android:drawableTop="@drawable/rb_settingcenter_selector"
+            android:text="@string/setting"
+            />
+
+    </RadioGroup>
+
+</LinearLayout>

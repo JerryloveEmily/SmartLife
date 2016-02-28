@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.jerry.smartlife.view.PagerEnabledSlidingPaneLayout
+        android:id="@+id/spl_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/fl_left_menu"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:background="@color/left_menu_color"
+            />
+
+        <FrameLayout
+            android:id="@+id/fl_right_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="@color/colorPrimary"
+            >
+        </FrameLayout>
+
+
+    </com.jerry.smartlife.view.PagerEnabledSlidingPaneLayout>
+</RelativeLayout>

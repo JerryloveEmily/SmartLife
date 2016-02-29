@@ -1,19 +1,21 @@
 package com.jerry.smartlife.fragment.base;
 
 import android.content.Context;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jerry.smartlife.R;
+import com.jerry.smartlife.activity.MainActivity;
 
 /**
  * 主界面页面基类
  * Created by JerryloveEmily on 16/2/28.
  */
-public class BaseContentPager {
+public class BaseTagPager {
 
     protected Context mContext;
     protected View mRootView;
@@ -21,7 +23,7 @@ public class BaseContentPager {
     protected TextView mTvTitle;
     protected FrameLayout mFlContent;
 
-    public BaseContentPager(Context context){
+    public BaseTagPager(Context context){
         this.mContext = context;
         initView();
         initData();
@@ -47,8 +49,13 @@ public class BaseContentPager {
         mIbtnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 打开菜单
-                Toast.makeText(mContext, "打开菜单...", Toast.LENGTH_SHORT).show();
+                // 打开或者关闭左侧菜单
+                DrawerLayout drawerLayout = ((MainActivity) mContext).getDrawerLayout();
+                if (drawerLayout.isDrawerOpen(Gravity.LEFT)){
+                    drawerLayout.closeDrawer(Gravity.LEFT);
+                }else {
+                    drawerLayout.openDrawer(Gravity.LEFT);
+                }
             }
         });
     }

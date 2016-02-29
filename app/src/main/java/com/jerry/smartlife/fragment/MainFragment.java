@@ -3,15 +3,17 @@ package com.jerry.smartlife.fragment;
 
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
 
 import com.jerry.smartlife.R;
-import com.jerry.smartlife.fragment.base.BaseContentPager;
 import com.jerry.smartlife.fragment.base.BaseFragment;
+import com.jerry.smartlife.fragment.base.BaseTagPager;
+import com.jerry.smartlife.view.LazyLoadViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,9 @@ public class MainFragment extends BaseFragment {
 
 
     @Bind(R.id.vp_content_pager)
-    ViewPager mContentPagerView;
+    LazyLoadViewPager mVpContent;
+    @Bind(R.id.tab_bar)
+    RadioGroup mRgTabBar;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -38,7 +42,9 @@ public class MainFragment extends BaseFragment {
     private String mParam2;
 
     private MyOnPagerChangeListener mPagerChangeListener;
-    private List<BaseContentPager> mPagers = new ArrayList<>(5);
+    private List<BaseTagPager> mPagers = new ArrayList<>(5);
+
+    private int mCurrentSelectIndex;    // 当前选择的页面编号
 
     public MainFragment() {
     }
@@ -64,15 +70,8 @@ public class MainFragment extends BaseFragment {
     @Override
     public View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-//        View view = View.inflate(mMainActivity, R.layout.fragment_main, null);
         ButterKnife.bind(this, view);
         return view;
-    }
-
-    @Override
-    public void bindView(View view) {
-        super.bindView(view);
-
     }
 
     @Override
@@ -90,17 +89,62 @@ public class MainFragment extends BaseFragment {
         mPagers.add(new SettingCenterPager(mMainActivity));
 
         MyAdapter adapter = new MyAdapter();
-        mContentPagerView.setAdapter(adapter);
+        mVpContent.setAdapter(adapter);
+
+        // 设置默认选中首页
+        switchPager();
+        // 修改首页tab显示
+        mRgTabBar.check(R.id.tab_home);
     }
 
     @Override
     public void initEvent() {
         super.initEvent();
         mPagerChangeListener = new MyOnPagerChangeListener();
-        mContentPagerView.addOnPageChangeListener(mPagerChangeListener);
+        mVpContent.setOnPageChangeListener(mPagerChangeListener);
+
+        mRgTabBar.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.tab_home:
+                        mCurrentSelectIndex = 0;
+                        break;
+                    case R.id.tab_news:
+                        mCurrentSelectIndex = 1;
+                        break;
+                    case R.id.tab_smartservice:
+                        mCurrentSelectIndex = 2;
+                        break;
+                    case R.id.tab_govaffairs:
+                        mCurrentSelectIndex = 3;
+                        break;
+                    case R.id.tab_setting:
+                        mCurrentSelectIndex = 4;
+                        break;
+                }
+                switchPager();
+            }
+        });
     }
 
-    private class MyOnPagerChangeListener implements ViewPager.OnPageChangeListener{
+    /**
+     * 设置选中的页面，切换内容显示页面
+     */
+    private void switchPager(){
+        mVpContent.setCurrentItem(mCurrentSelectIndex, false);
+
+        // 限制第一个和最后一个页面无法画出侧边栏
+        if (mCurrentSelectIndex == 0 || mCurrentSelectIndex == mPagers.size() - 1){
+            // 不让左侧菜单滑出
+            mMainActivity.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }else {
+            // 可以滑出左侧菜单
+            mMainActivity.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
+    }
+
+    private class MyOnPagerChangeListener implements LazyLoadViewPager.OnPageChangeListener{
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -122,9 +166,10 @@ public class MainFragment extends BaseFragment {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            BaseContentPager pager = mPagers.get(position);
+            BaseTagPager pager = mPagers.get(position);
             View rootView = pager.getRootView();
             container.addView(rootView);
+            Log.e(TAG, "instantiateItem: " + position);
             return rootView;
         }
 

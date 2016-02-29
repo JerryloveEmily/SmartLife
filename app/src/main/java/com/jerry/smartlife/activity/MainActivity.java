@@ -2,22 +2,22 @@ package com.jerry.smartlife.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.SlidingPaneLayout;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.jerry.smartlife.R;
 import com.jerry.smartlife.fragment.LeftMenuFragment;
 import com.jerry.smartlife.fragment.MainFragment;
-import com.jerry.smartlife.view.PagerEnabledSlidingPaneLayout;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
 
-    @Bind(R.id.spl_layout)
-    PagerEnabledSlidingPaneLayout mSlidingLayout;
+    @Bind(R.id.dl_layout)
+    DrawerLayout mDrawerLayout;
     @Bind(R.id.fl_left_menu)
     FrameLayout mFlMenuLayout;
     @Bind(R.id.fl_right_content)
@@ -41,26 +41,32 @@ public class MainActivity extends BaseActivity {
         transaction.add(R.id.fl_left_menu, LeftMenuFragment.newInstance("", ""),
                 LeftMenuFragment.LEFT_MENU_TAG);
         transaction.commit();
+
+        initDrawerLayout();
+    }
+
+    private void initDrawerLayout(){
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, null,
+                R.string.app_name, R.string.app_name){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+        };
+        drawerToggle.syncState();
+        mDrawerLayout.setDrawerListener(drawerToggle);
     }
 
     private void initEvent(){
-        mSlidingLayout.setPanelSlideListener(new SlidingPaneLayout.PanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
-
-            }
-
-            @Override
-            public void onPanelOpened(View panel) {
-
-            }
-
-            @Override
-            public void onPanelClosed(View panel) {
-
-            }
-        });
 
     }
 
+    public DrawerLayout getDrawerLayout(){
+        return mDrawerLayout;
+    }
 }

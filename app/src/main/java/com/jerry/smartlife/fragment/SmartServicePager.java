@@ -5,13 +5,13 @@ import android.graphics.Color;
 import android.view.Gravity;
 import android.widget.TextView;
 
-import com.jerry.smartlife.fragment.base.BaseContentPager;
+import com.jerry.smartlife.fragment.base.BaseTagPager;
 
 /**
  * 首页
  * Created by JerryloveEmily on 16/2/28.
  */
-public class SmartServicePager extends BaseContentPager {
+public class SmartServicePager extends BaseTagPager {
 
     public SmartServicePager(Context context) {
         super(context);

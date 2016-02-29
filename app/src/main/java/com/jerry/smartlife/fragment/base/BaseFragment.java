@@ -32,7 +32,6 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        bindView(view);
     }
 
     @Override
@@ -50,10 +49,6 @@ public abstract class BaseFragment extends Fragment {
      * @return                   布局视图对象
      */
     public abstract View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
-
-    public void bindView(View view){
-
-    }
 
     /**
      * 初始化数据

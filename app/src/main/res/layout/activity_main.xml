@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.jerry.smartlife.view.PagerEnabledSlidingPaneLayout
-        android:id="@+id/spl_layout"
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/dl_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -21,11 +21,9 @@
             android:id="@+id/fl_right_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:background="@color/colorPrimary"
             >
         </FrameLayout>
 
 
-    </com.jerry.smartlife.view.PagerEnabledSlidingPaneLayout>
+    </android.support.v4.widget.DrawerLayout>
 </RelativeLayout>

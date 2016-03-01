@@ -3,6 +3,8 @@ package com.jerry.smartlife.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.jerry.smartlife.app.AppConst;
+
 /**
  * Created by JerryloveEmily on 16/2/27.
  */

@@ -45,6 +45,10 @@ public class MainActivity extends BaseActivity {
         initDrawerLayout();
     }
 
+    public LeftMenuFragment getLeftMenuFragment(){
+        return (LeftMenuFragment) getSupportFragmentManager().findFragmentByTag(LeftMenuFragment.LEFT_MENU_TAG);
+    }
+
     private void initDrawerLayout(){
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, null,
                 R.string.app_name, R.string.app_name){

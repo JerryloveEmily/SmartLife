@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.jerry.smartlife.R;
-import com.jerry.smartlife.utils.AppConst;
+import com.jerry.smartlife.app.AppConst;
 import com.jerry.smartlife.utils.DensityUtil;
 import com.jerry.smartlife.utils.SharedPUtil;
 

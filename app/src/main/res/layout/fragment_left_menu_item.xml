@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tv_name"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="15dp"
-    android:drawablePadding="10dp"
-    android:drawableLeft="@drawable/leftmenu_list_item_tv_drawable"
-    android:text="@string/app_name"
-    android:textColor="@color/white"
-    android:textSize="18sp"
+    android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants"
     >
 
-</TextView>
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/leftmenu_list_item_tv_drawable"
+        android:drawablePadding="20dp"
+        android:padding="15dp"
+        android:text="@string/app_name"
+        android:textColor="@color/leftmenu_list_item_tv_color"
+        android:textSize="20sp" />
+</LinearLayout>

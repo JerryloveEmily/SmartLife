@@ -129,6 +129,17 @@ public class MainFragment extends BaseFragment {
     }
 
     /**
+     * 左侧菜单栏选择item子项后转换内容显示页面
+     * @param subSelectItemIndex    选择的子菜单项
+     */
+    public void leftMenuSelectItemSwitchPage(int subSelectItemIndex){
+        // 获取用户点击的是底部tab栏的那个页面
+        BaseTagPager baseTagPager = mPagers.get(mCurrentSelectIndex);
+        // 获取tab栏后，控制用户点击菜单栏子项后显示的界面
+        baseTagPager.switchPage(subSelectItemIndex);
+    }
+
+    /**
      * 设置选中的页面，切换内容显示页面
      */
     private void switchPager(){

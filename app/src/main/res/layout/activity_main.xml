@@ -9,21 +9,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!--这里DrawerLayout的使用有一个坑，第一个childView不能是左右菜单抽屉，
+        否则菜单里的事件无法点击，只是关闭菜单抽屉而已-->
+
+        <FrameLayout
+            android:id="@+id/fl_right_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
         <FrameLayout
             android:id="@+id/fl_left_menu"
             android:layout_width="150dp"
             android:layout_height="match_parent"
             android:layout_gravity="left"
             android:background="@color/left_menu_color"
+            android:focusable="false"
             />
-
-        <FrameLayout
-            android:id="@+id/fl_right_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
-        </FrameLayout>
-
 
     </android.support.v4.widget.DrawerLayout>
 </RelativeLayout>

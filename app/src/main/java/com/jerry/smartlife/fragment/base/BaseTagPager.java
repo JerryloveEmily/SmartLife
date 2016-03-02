@@ -1,8 +1,6 @@
 package com.jerry.smartlife.fragment.base;
 
 import android.content.Context;
-import android.support.v4.widget.DrawerLayout;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -50,13 +48,21 @@ public class BaseTagPager {
             @Override
             public void onClick(View v) {
                 // 打开或者关闭左侧菜单
-                DrawerLayout drawerLayout = ((MainActivity) mContext).getDrawerLayout();
+                ((MainActivity) mContext).toggleDrawerLayout();
+                /*DrawerLayout drawerLayout = ((MainActivity) mContext).getDrawerLayout();
                 if (drawerLayout.isDrawerOpen(Gravity.LEFT)){
                     drawerLayout.closeDrawer(Gravity.LEFT);
                 }else {
                     drawerLayout.openDrawer(Gravity.LEFT);
-                }
+                }*/
             }
         });
+    }
+
+    /**
+     * 有好几个Viewpager主页tab页面是有侧边栏菜单可以用来切换内容显示视图
+     * @param position  侧边栏菜单点击的子项
+     */
+    public void switchPage(int position){
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,6 +34,9 @@ public class LeftMenuFragment extends BaseFragment {
 
     private QuickAdapter<NewsCenterData.NewsData> mAdapter;
 
+    // 当前选中的菜单索引值
+    private int mSelectIndex;
+
     public static LeftMenuFragment newInstance(String param1, String param2) {
         LeftMenuFragment fragment = new LeftMenuFragment();
         Bundle args = new Bundle();
@@ -46,6 +50,24 @@ public class LeftMenuFragment extends BaseFragment {
     public View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_left_menu, container, false);
         ButterKnife.bind(this, view);
+
+        //listview显示左侧菜单
+        /*mLvLeftMenu = new ListView(mMainActivity);
+        //背景是黑色
+        mLvLeftMenu.setBackgroundColor(Color.BLACK);
+
+        //选中拖动的背景色 设置成透明
+        mLvLeftMenu.setCacheColorHint(Color.TRANSPARENT);
+
+        //设置选中时为透明背景
+        mLvLeftMenu.setSelector(new ColorDrawable(Color.TRANSPARENT));
+
+        //没有分割线
+        mLvLeftMenu.setDividerHeight(0);
+
+        //距顶部为45px
+        mLvLeftMenu.setPadding(0, 45, 0, 0);*/
+
         return view;
     }
 
@@ -56,6 +78,7 @@ public class LeftMenuFragment extends BaseFragment {
             protected void convert(BaseAdapterHelper helper, int position, NewsCenterData.NewsData item) {
                 TextView tvTitle = helper.getView(R.id.tv_name);
                 tvTitle.setText(item.title);
+                tvTitle.setEnabled(position == mSelectIndex);
             }
         };
         mLvLeftMenu.setAdapter(mAdapter);
@@ -68,6 +91,20 @@ public class LeftMenuFragment extends BaseFragment {
 
     @Override
     public void initEvent() {
+        mLvLeftMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mSelectIndex = position;
+                // 更新listview界面
+                mAdapter.notifyDataSetChanged();
+
+                // 关闭侧滑菜单栏
+                mMainActivity.closeLeftDrawer();
+
+                // 点击子项item的时候显示出对应的内容
+                mMainActivity.getMainContentFragment().leftMenuSelectItemSwitchPage(position);
+            }
+        });
         super.initEvent();
     }
 }

@@ -1,17 +1,15 @@
 package com.jerry.smartlife.fragment.newscenter;
 
-import android.graphics.Color;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.flyco.tablayout.SlidingTabLayout;
 import com.jerry.smartlife.R;
 import com.jerry.smartlife.activity.MainActivity;
 import com.jerry.smartlife.bean.NewsCenterData;
+import com.jerry.smartlife.fragment.newscenter.pagetag.PageTagNewsNewsCenterPage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,12 +71,12 @@ public class NewsBaseNewsCenterPage extends BaseNewsCenterPage {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            TextView textView = new TextView(mainActivity);
-            textView.setText(mViewTagDatas.get(position).title);
-            textView.setTextColor(Color.DKGRAY);
-            textView.setGravity(Gravity.CENTER);
-            container.addView(textView);
-            return textView;
+            // 初始化每个页签的界面
+            PageTagNewsNewsCenterPage page = new PageTagNewsNewsCenterPage(
+                    mainActivity, mViewTagDatas.get(position));
+            View view = page.getRootView();
+            container.addView(view);
+            return  view;
         }
 
         @Override

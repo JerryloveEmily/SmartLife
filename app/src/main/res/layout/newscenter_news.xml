@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.flyco.tablayout.SlidingTabLayout xmlns:tab="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/newscenter_stl_tab"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:paddingBottom="5dp"
+            android:paddingTop="8dp"
+            tab:tl_indicator_anim_enable="true"
+            tab:tl_indicator_color="@color/colorPrimary"
+            tab:tl_indicator_width_equal_title="true"
+            tab:tl_tab_padding="15dp"
+            tab:tl_textSelectColor="@color/colorPrimary"
+            tab:tl_textUnselectColor="@color/newscenter_tag_unselect"
+            tab:tl_textsize="15sp" />
+
+        <ImageButton
+            android:id="@+id/newscenter_ib_nextpage"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/news_cate_arr" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/divide" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/newscenter_vp_pager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>

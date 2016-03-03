@@ -153,6 +153,9 @@ public class MainFragment extends BaseFragment {
             // 可以滑出左侧菜单
             mMainActivity.getDrawerLayout().setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         }
+
+        // 加载数据
+        mPagers.get(mCurrentSelectIndex).initData();
     }
 
     private class MyOnPagerChangeListener implements LazyLoadViewPager.OnPageChangeListener{

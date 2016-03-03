@@ -24,7 +24,7 @@ public class BaseTagPager {
     public BaseTagPager(Context context){
         this.mContext = context;
         initView();
-        initData();
+//        initData();
         initEvent();
     }
 
@@ -49,12 +49,6 @@ public class BaseTagPager {
             public void onClick(View v) {
                 // 打开或者关闭左侧菜单
                 ((MainActivity) mContext).toggleDrawerLayout();
-                /*DrawerLayout drawerLayout = ((MainActivity) mContext).getDrawerLayout();
-                if (drawerLayout.isDrawerOpen(Gravity.LEFT)){
-                    drawerLayout.closeDrawer(Gravity.LEFT);
-                }else {
-                    drawerLayout.openDrawer(Gravity.LEFT);
-                }*/
             }
         });
     }

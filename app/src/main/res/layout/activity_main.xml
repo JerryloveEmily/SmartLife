@@ -20,7 +20,7 @@
 
         <FrameLayout
             android:id="@+id/fl_left_menu"
-            android:layout_width="150dp"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
             android:layout_gravity="left"
             android:background="@color/left_menu_color"

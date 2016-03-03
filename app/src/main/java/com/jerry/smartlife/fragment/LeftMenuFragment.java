@@ -50,24 +50,6 @@ public class LeftMenuFragment extends BaseFragment {
     public View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_left_menu, container, false);
         ButterKnife.bind(this, view);
-
-        //listview显示左侧菜单
-        /*mLvLeftMenu = new ListView(mMainActivity);
-        //背景是黑色
-        mLvLeftMenu.setBackgroundColor(Color.BLACK);
-
-        //选中拖动的背景色 设置成透明
-        mLvLeftMenu.setCacheColorHint(Color.TRANSPARENT);
-
-        //设置选中时为透明背景
-        mLvLeftMenu.setSelector(new ColorDrawable(Color.TRANSPARENT));
-
-        //没有分割线
-        mLvLeftMenu.setDividerHeight(0);
-
-        //距顶部为45px
-        mLvLeftMenu.setPadding(0, 45, 0, 0);*/
-
         return view;
     }
 
@@ -85,8 +67,8 @@ public class LeftMenuFragment extends BaseFragment {
         super.initData();
     }
 
-    public void setLeftMenuData(List<NewsCenterData.NewsData> data){
-        mAdapter.addAll(data);
+    public void setLeftMenuData(List<NewsCenterData.NewsData> data) {
+        mAdapter.replaceAll(data);
     }
 
     @Override
@@ -102,9 +84,23 @@ public class LeftMenuFragment extends BaseFragment {
                 mMainActivity.closeLeftDrawer();
 
                 // 点击子项item的时候显示出对应的内容
-                mMainActivity.getMainContentFragment().leftMenuSelectItemSwitchPage(position);
+                if (mSwitchPagerListener != null){
+                    mSwitchPagerListener.switchPage(position);
+                }else {
+                    mMainActivity.getMainContentFragment().leftMenuSelectItemSwitchPage(position);
+                }
             }
         });
         super.initEvent();
+    }
+
+    private OnSwitchPageListener mSwitchPagerListener;
+
+    public void setOnSwitchPagerListener(OnSwitchPageListener listener){
+        this.mSwitchPagerListener = listener;
+    }
+
+    public interface OnSwitchPageListener {
+        void switchPage(int selectionIndex);
     }
 }

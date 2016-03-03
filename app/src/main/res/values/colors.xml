@@ -12,4 +12,7 @@
     <color name="normal_color">#666666</color>
 
     <color name="left_menu_color">#626262</color>
+
+    <!--新闻中心-->
+    <color name="newscenter_tag_unselect">#898989</color>
 </resources>

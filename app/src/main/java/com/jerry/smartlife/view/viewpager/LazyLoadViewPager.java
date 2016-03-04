@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.jerry.smartlife.view;
+package com.jerry.smartlife.view.viewpager;
 
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -230,9 +230,9 @@ public class LazyLoadViewPager extends ViewGroup {
     }
 
     /**
-     * Simple implementation of the {@link com.jerry.smartlife.view.LazyLoadViewPager.OnPageChangeListener} interface with stub
+     * Simple implementation of the {@link LazyLoadViewPager.OnPageChangeListener} interface with stub
      * implementations of each method. Extend this if you do not intend to override
-     * every method of {@link com.jerry.smartlife.view.LazyLoadViewPager.OnPageChangeListener}.
+     * every method of {@link LazyLoadViewPager.OnPageChangeListener}.
      */
     public static class SimpleOnPageChangeListener implements OnPageChangeListener {
         @Override

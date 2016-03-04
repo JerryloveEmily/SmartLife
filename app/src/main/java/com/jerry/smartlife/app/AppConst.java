@@ -9,4 +9,6 @@ public interface AppConst {
     String ISFIRSTSTART = "isFirstStart";
     // 新闻中心数据
     String NEWSCENTERCACHE="newsCenterCache";
+    // 新闻中心新闻内容数据
+    String NEWSNEWSCENTERCACHE="newsNewsCenterCache";
 }

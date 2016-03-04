@@ -1,4 +1,4 @@
-package com.jerry.smartlife.view;
+package com.jerry.smartlife.view.viewpager;
 
 import android.content.Context;
 import android.util.AttributeSet;

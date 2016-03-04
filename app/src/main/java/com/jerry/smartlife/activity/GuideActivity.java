@@ -95,10 +95,10 @@ public class GuideActivity extends BaseActivity {
             int dp = 8;
             LinearLayout.LayoutParams params =
                     new LinearLayout.LayoutParams(
-                            DensityUtil.dp2px(this,dp),
-                            DensityUtil.dp2px(this,dp));
+                            DensityUtil.dip2px(this, dp),
+                            DensityUtil.dip2px(this, dp));
             if (i != 0){
-                params.leftMargin = DensityUtil.dp2px(this,dp);
+                params.leftMargin = DensityUtil.dip2px(this,dp);
             }
             vPoint.setLayoutParams(params);
 

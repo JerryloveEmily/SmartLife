@@ -13,7 +13,7 @@ import android.widget.RadioGroup;
 import com.jerry.smartlife.R;
 import com.jerry.smartlife.fragment.base.BaseFragment;
 import com.jerry.smartlife.fragment.base.BaseTagPager;
-import com.jerry.smartlife.view.LazyLoadViewPager;
+import com.jerry.smartlife.view.viewpager.LazyLoadViewPager;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -23,6 +22,7 @@ import com.jerry.smartlife.utils.DensityUtil;
 import com.jerry.smartlife.utils.SharedPUtil;
 import com.jerry.smartlife.utils.quickadapter.BaseAdapterHelper;
 import com.jerry.smartlife.utils.quickadapter.QuickAdapter;
+import com.jerry.smartlife.view.listview.RefreshListView;
 import com.jerry.smartlife.view.viewpager.scroller.ViewPagerScroller;
 
 import org.xutils.common.Callback;
@@ -58,7 +58,7 @@ public class PageTagNewsNewsCenterPage {
     private LinearLayout mLLPoints;     // 轮播图点的指示容器
 
     @Bind(R.id.lv_content)
-    ListView mLvContent;        // 新闻内容列表
+    RefreshListView mLvContent;        // 新闻内容列表
 
     private ViewPagerScroller mBannerScroller;
     private BannerAdapter mBannerAdapter;       // 轮播图适配器
@@ -99,7 +99,7 @@ public class PageTagNewsNewsCenterPage {
         mTvBannerTitle = (TextView) mBannerView.findViewById(R.id.tv_title);
         mLLPoints = (LinearLayout) mBannerView.findViewById(R.id.ll_points);
         // 把轮播图添加到listview中
-        mLvContent.addHeaderView(mBannerView);
+        mLvContent.addBannerView(mBannerView);
     }
 
     private void initData() {
@@ -120,8 +120,6 @@ public class PageTagNewsNewsCenterPage {
         }
         // 从网络获取数据
         getDataFromNet();
-        mLvContent.setSelection(0);
-
     }
 
     private void initNewsListView() {

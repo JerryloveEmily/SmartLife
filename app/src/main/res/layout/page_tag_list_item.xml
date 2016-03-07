@@ -23,13 +23,16 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:text="家乐福的数据库范德萨据了解家乐福的数据库里发生就卡了上就快啦打发时间可怜的份上就看了就卡了"
+        android:textSize="18sp"
+        android:textColor="@color/drak_black"
         />
 
     <TextView
+        android:id="@+id/tv_pubdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/tv_title"
-        android:layout_below="@id/tv_title"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="25dp"
         android:text="2016-03-06 20:20:20"
         />

@@ -13,6 +13,11 @@ import android.widget.RadioGroup;
 import com.jerry.smartlife.R;
 import com.jerry.smartlife.fragment.base.BaseFragment;
 import com.jerry.smartlife.fragment.base.BaseTagPager;
+import com.jerry.smartlife.fragment.tagpager.GovAffairPager;
+import com.jerry.smartlife.fragment.tagpager.HomePager;
+import com.jerry.smartlife.fragment.tagpager.NewsCenterPager;
+import com.jerry.smartlife.fragment.tagpager.SettingCenterPager;
+import com.jerry.smartlife.fragment.tagpager.SmartServicePager;
 import com.jerry.smartlife.view.viewpager.LazyLoadViewPager;
 
 import java.util.ArrayList;

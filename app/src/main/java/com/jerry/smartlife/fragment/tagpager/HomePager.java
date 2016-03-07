@@ -1,4 +1,4 @@
-package com.jerry.smartlife.fragment;
+package com.jerry.smartlife.fragment.tagpager;
 
 import android.content.Context;
 import android.graphics.Color;

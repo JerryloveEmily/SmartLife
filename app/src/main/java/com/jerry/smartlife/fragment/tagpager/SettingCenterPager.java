@@ -1,8 +1,9 @@
-package com.jerry.smartlife.fragment;
+package com.jerry.smartlife.fragment.tagpager;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.TextView;
 
 import com.jerry.smartlife.fragment.base.BaseTagPager;
@@ -11,9 +12,9 @@ import com.jerry.smartlife.fragment.base.BaseTagPager;
  * 首页
  * Created by JerryloveEmily on 16/2/28.
  */
-public class GovAffairPager extends BaseTagPager {
+public class SettingCenterPager extends BaseTagPager {
 
-    public GovAffairPager(Context context) {
+    public SettingCenterPager(Context context) {
         super(context);
     }
 
@@ -26,9 +27,11 @@ public class GovAffairPager extends BaseTagPager {
     @Override
     public void initData() {
         super.initData();
-        mTvTitle.setText("政务");
+        mTvTitle.setText("设置");
+        // 隐藏打开侧边栏按钮
+        mIbtnMenu.setVisibility(View.GONE);
         TextView tv = new TextView(mContext);
-        tv.setText("政务的内容");
+        tv.setText("设置的内容");
         tv.setTextSize(22);
         tv.setTextColor(Color.DKGRAY);
         tv.setGravity(Gravity.CENTER);

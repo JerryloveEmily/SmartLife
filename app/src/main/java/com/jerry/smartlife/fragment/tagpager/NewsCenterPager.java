@@ -1,4 +1,4 @@
-package com.jerry.smartlife.fragment;
+package com.jerry.smartlife.fragment.tagpager;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.jerry.smartlife.activity.MainActivity;
 import com.jerry.smartlife.app.AppConst;
 import com.jerry.smartlife.bean.NewsCenterData;
+import com.jerry.smartlife.fragment.LeftMenuFragment;
 import com.jerry.smartlife.fragment.base.BaseTagPager;
 import com.jerry.smartlife.fragment.newscenter.BaseNewsCenterPage;
 import com.jerry.smartlife.fragment.newscenter.InteractBaseNewsCenterPage;

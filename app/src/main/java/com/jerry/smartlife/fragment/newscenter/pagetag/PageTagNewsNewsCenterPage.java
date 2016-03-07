@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,6 +21,8 @@ import com.jerry.smartlife.bean.NewsCenterData;
 import com.jerry.smartlife.bean.PageTagNewsData;
 import com.jerry.smartlife.utils.DensityUtil;
 import com.jerry.smartlife.utils.SharedPUtil;
+import com.jerry.smartlife.utils.quickadapter.BaseAdapterHelper;
+import com.jerry.smartlife.utils.quickadapter.QuickAdapter;
 import com.jerry.smartlife.view.viewpager.scroller.ViewPagerScroller;
 
 import org.xutils.common.Callback;
@@ -46,20 +49,24 @@ public class PageTagNewsNewsCenterPage {
 
     private MainActivity mainActivity;
     private View mRootView;
-    @Bind(R.id.vp_banner)
-    ViewPager mVpBanner;        // 轮播图广告条
-    @Bind(R.id.tv_title)
-    TextView mTvBannerTitle;    // 轮播图描述
-    @Bind(R.id.ll_points)
-    LinearLayout mLLPoints;     // 轮播图点的指示容器
+    private View mBannerView;
+//    @Bind(R.id.vp_banner)
+    private ViewPager mVpBanner;        // 轮播图广告条
+//    @Bind(R.id.tv_title)
+     TextView mTvBannerTitle;    // 轮播图描述
+//    @Bind(R.id.ll_points)
+    private LinearLayout mLLPoints;     // 轮播图点的指示容器
+
     @Bind(R.id.lv_content)
     ListView mLvContent;        // 新闻内容列表
 
     private ViewPagerScroller mBannerScroller;
-    private BannerAdapter mBannerAdapter;
+    private BannerAdapter mBannerAdapter;       // 轮播图适配器
     private NewsCenterData.NewsData.ViewTagData mViewTagData;
     private Gson mGson;
     private Handler mHandler = new Handler(Looper.getMainLooper());
+    // 新闻列表适配器
+    private QuickAdapter<PageTagNewsData.NewsContent.ListNewsData> mNewsAdapter;
 
     private List<PageTagNewsData.NewsContent.TopNewsData> mTopNewsDatas = new ArrayList<>();
 
@@ -76,6 +83,23 @@ public class PageTagNewsNewsCenterPage {
         // 页签页面的根布局
         mRootView = View.inflate(mainActivity, R.layout.newscenter_page_tag_news_content, null);
         ButterKnife.bind(this, mRootView);
+
+        /*在listview的header加入视图的两个坑：*/
+        /**
+         *1. listView的HeaderView不能通过以下方式加载的view来添加
+         *   mBannerView = View.inflate(mainActivity, R.layout.newscenter_page_tag_news_banner, null);
+         *
+         *2. 如下动态加载一个布局添加到listview的这种情况的，无法使用ButterKnife来做视图注解
+         *   ButterKnife.bind(this, mBannerView);
+         */
+        mBannerView = LayoutInflater.from(mainActivity).inflate(
+                R.layout.newscenter_page_tag_news_banner,
+                mLvContent, false);
+        mVpBanner = (ViewPager) mBannerView.findViewById(R.id.vp_banner);
+        mTvBannerTitle = (TextView) mBannerView.findViewById(R.id.tv_title);
+        mLLPoints = (LinearLayout) mBannerView.findViewById(R.id.ll_points);
+        // 把轮播图添加到listview中
+        mLvContent.addHeaderView(mBannerView);
     }
 
     private void initData() {
@@ -85,6 +109,8 @@ public class PageTagNewsNewsCenterPage {
         // 修改viewpager滚动一页的时间,默认是1秒
         mBannerScroller = new ViewPagerScroller(mainActivity);
         mBannerScroller.initViewPagerScroller(mVpBanner);
+        initNewsListView();
+
         // 获取本地缓存数据
         String jsonCache = SharedPUtil.getString(mainActivity, AppConst.NEWSNEWSCENTERCACHE, "");
         if (!TextUtils.isEmpty(jsonCache)) {
@@ -94,6 +120,45 @@ public class PageTagNewsNewsCenterPage {
         }
         // 从网络获取数据
         getDataFromNet();
+        mLvContent.setSelection(0);
+
+    }
+
+    private void initNewsListView() {
+        mNewsAdapter = new QuickAdapter<PageTagNewsData.NewsContent.ListNewsData>(
+                mainActivity, R.layout.page_tag_list_item) {
+            private ImageOptions.Builder mBannerImgBuider = new ImageOptions.Builder();
+
+            @Override
+            protected void convert(BaseAdapterHelper helper, int position,
+                                   PageTagNewsData.NewsContent.ListNewsData item) {
+                ImageView ivThumbnail = helper.getView(R.id.iv_thumbnail);
+                // 通过xUtils3框架设置和加载网络图片
+                x.image().bind(ivThumbnail, item.listimage,
+                        getBannerImageOptions(
+                                DensityUtil.dpToPx(100),
+                                DensityUtil.dpToPx(80)));
+
+                // 标题描述
+                TextView tvTitle = helper.getView(R.id.tv_title);
+                tvTitle.setText(item.title);
+
+                // 发布日期
+                TextView tvPubDate = helper.getView(R.id.tv_pubdate);
+                tvPubDate.setText(item.pubdate);
+            }
+
+            private ImageOptions getBannerImageOptions(int imageWidth, int imageHeight) {
+                // 设置默认图片
+                mBannerImgBuider.setLoadingDrawableId(R.drawable.home_scroll_default);
+                mBannerImgBuider.setPlaceholderScaleType(ImageView.ScaleType.CENTER_CROP);
+                mBannerImgBuider.setSize(imageWidth, imageHeight);
+                mBannerImgBuider.setUseMemCache(true);
+                mBannerImgBuider.setImageScaleType(ImageView.ScaleType.CENTER_CROP);
+                return mBannerImgBuider.build();
+            }
+        };
+        mLvContent.setAdapter(mNewsAdapter);
     }
 
     /**
@@ -121,6 +186,16 @@ public class PageTagNewsNewsCenterPage {
 
         // 轮播图自动轮播的处理
         bannerAutoScrollProcess();
+
+        // 加载新闻列表数据
+        loadNewsListData(pageTagNewsData);
+    }
+
+    private void loadNewsListData(PageTagNewsData pageTagNewsData) {
+        if (pageTagNewsData.data.news == null || pageTagNewsData.data.news.isEmpty()) {
+            return;
+        }
+        mNewsAdapter.replaceAll(pageTagNewsData.data.news);
     }
 
     private void bannerAutoScrollProcess() {
@@ -131,7 +206,7 @@ public class PageTagNewsNewsCenterPage {
                 // 控制轮播图的显示
                 int position = (mVpBanner.getCurrentItem() + 1) % mVpBanner.getAdapter().getCount();
                 // 如果是最后一个item的时候，去除viewpager切换页面的动画
-                mVpBanner.setCurrentItem(position, position != 0);
+                mVpBanner.setCurrentItem(position, true);
                 mHandler.postDelayed(this, BANNER_AUTO_SCROLL_DELAY_TIME);
             }
         }, BANNER_AUTO_SCROLL_DELAY_TIME);
@@ -199,9 +274,61 @@ public class PageTagNewsNewsCenterPage {
                         "                \"commentlist\": \"https://www.baidu.com\",\n" +
                         "                \"commenturl\": \"https://www.baidu.com\",\n" +
                         "                \"id\": 10001,\n" +
-                        "                \"listimage\": \"https://www.baidu.com\",\n" +
+                        "                \"listimage\": \"http://img1.imgtn.bdimg.com/it/u=1603548911,2310384524&fm=23&gp=0.jpg\",\n" +
                         "                \"pubdate\": \"2016年02月12日 08:20:36\",\n" +
                         "                \"title\": \"Android开发大会\",\n" +
+                        "                \"type\": 1,\n" +
+                        "                \"url\": \"https://www.baidu.com\"\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "                \"comment\": true,\n" +
+                        "                \"commentlist\": \"https://www.baidu.com\",\n" +
+                        "                \"commenturl\": \"https://www.baidu.com\",\n" +
+                        "                \"id\": 10002,\n" +
+                        "                \"listimage\": \"http://img4.imgtn.bdimg.com/it/u=3348217047,3111455891&fm=23&gp=0.jpg\",\n" +
+                        "                \"pubdate\": \"2016年02月12日 08:20:36\",\n" +
+                        "                \"title\": \"IOS开发大会\",\n" +
+                        "                \"type\": 1,\n" +
+                        "                \"url\": \"https://www.baidu.com\"\n" +
+                        "            },\n" +
+                        "            {\n" +
+                        "                \"comment\": true,\n" +
+                        "                \"commentlist\": \"https://www.baidu.com\",\n" +
+                        "                \"commenturl\": \"https://www.baidu.com\",\n" +
+                        "                \"id\": 10003,\n" +
+                        "                \"listimage\": \"http://img4.imgtn.bdimg.com/it/u=549312016,4049119024&fm=23&gp=0.jpg\",\n" +
+                        "                \"pubdate\": \"2016年02月12日 08:20:36\",\n" +
+                        "                \"title\": \"WindowPhone开发大会\",\n" +
+                        "                \"type\": 1,\n" +
+                        "                \"url\": \"https://www.baidu.com\"\n" +
+                        "            },{\n" +
+                        "                \"comment\": true,\n" +
+                        "                \"commentlist\": \"https://www.baidu.com\",\n" +
+                        "                \"commenturl\": \"https://www.baidu.com\",\n" +
+                        "                \"id\": 10004,\n" +
+                        "                \"listimage\": \"http://img2.imgtn.bdimg.com/it/u=1270641303,1899256283&fm=23&gp=0.jpg\",\n" +
+                        "                \"pubdate\": \"2016年02月12日 08:20:36\",\n" +
+                        "                \"title\": \"微信开发联盟大会\",\n" +
+                        "                \"type\": 1,\n" +
+                        "                \"url\": \"https://www.baidu.com\"\n" +
+                        "            },{\n" +
+                        "                \"comment\": true,\n" +
+                        "                \"commentlist\": \"https://www.baidu.com\",\n" +
+                        "                \"commenturl\": \"https://www.baidu.com\",\n" +
+                        "                \"id\": 10005,\n" +
+                        "                \"listimage\": \"http://img1.imgtn.bdimg.com/it/u=3267626669,2039187042&fm=23&gp=0.jpg\",\n" +
+                        "                \"pubdate\": \"2016年02月12日 08:20:36\",\n" +
+                        "                \"title\": \"阿里年度盛典\",\n" +
+                        "                \"type\": 1,\n" +
+                        "                \"url\": \"https://www.baidu.com\"\n" +
+                        "            },{\n" +
+                        "                \"comment\": true,\n" +
+                        "                \"commentlist\": \"https://www.baidu.com\",\n" +
+                        "                \"commenturl\": \"https://www.baidu.com\",\n" +
+                        "                \"id\": 10006,\n" +
+                        "                \"listimage\": \"http://img1.imgtn.bdimg.com/it/u=1662402735,2280034276&fm=23&gp=0.jpg\",\n" +
+                        "                \"pubdate\": \"2016年02月12日 08:20:36\",\n" +
+                        "                \"title\": \"可爱的小黄人\",\n" +
                         "                \"type\": 1,\n" +
                         "                \"url\": \"https://www.baidu.com\"\n" +
                         "            }\n" +

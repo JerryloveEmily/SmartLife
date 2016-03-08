@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jerry.smartlife.R;
@@ -50,11 +51,11 @@ public class PageTagNewsNewsCenterPage {
     private MainActivity mainActivity;
     private View mRootView;
     private View mBannerView;
-//    @Bind(R.id.vp_banner)
+    //    @Bind(R.id.vp_banner)
     private ViewPager mVpBanner;        // 轮播图广告条
-//    @Bind(R.id.tv_title)
-     TextView mTvBannerTitle;    // 轮播图描述
-//    @Bind(R.id.ll_points)
+    //    @Bind(R.id.tv_title)
+    TextView mTvBannerTitle;    // 轮播图描述
+    //    @Bind(R.id.ll_points)
     private LinearLayout mLLPoints;     // 轮播图点的指示容器
 
     @Bind(R.id.lv_content)
@@ -64,11 +65,14 @@ public class PageTagNewsNewsCenterPage {
     private BannerAdapter mBannerAdapter;       // 轮播图适配器
     private NewsCenterData.NewsData.ViewTagData mViewTagData;
     private Gson mGson;
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private Handler mHandler;
     // 新闻列表适配器
     private QuickAdapter<PageTagNewsData.NewsContent.ListNewsData> mNewsAdapter;
-
     private List<PageTagNewsData.NewsContent.TopNewsData> mTopNewsDatas = new ArrayList<>();
+
+    private int mCurrentBannerIndex;    // 当前轮播图的位置
+    private boolean isRefresh = false;          // 表示是下拉刷新数据
+    private String mLoadMoreDataUrl;
 
     public PageTagNewsNewsCenterPage(MainActivity mainActivity, NewsCenterData.NewsData.ViewTagData viewTagData) {
         this.mainActivity = mainActivity;
@@ -99,7 +103,8 @@ public class PageTagNewsNewsCenterPage {
         mTvBannerTitle = (TextView) mBannerView.findViewById(R.id.tv_title);
         mLLPoints = (LinearLayout) mBannerView.findViewById(R.id.ll_points);
         // 把轮播图添加到listview中
-        mLvContent.addBannerView(mBannerView);
+        mLvContent.setIsPullRefreshHeaderEnable(true);
+        mLvContent.addHeaderView(mBannerView);
     }
 
     private void initData() {
@@ -119,7 +124,50 @@ public class PageTagNewsNewsCenterPage {
             processData(pageTagNewsData);
         }
         // 从网络获取数据
-        getDataFromNet();
+        getDataFromNet(false);
+    }
+
+    private void initEvent() {
+        mVpBanner.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            /**
+             * 停留到的页面
+             * @param position ...
+             */
+            @Override
+            public void onPageSelected(int position) {
+                mCurrentBannerIndex = position;
+                setBannerImageTitleAndSelectPoint(mCurrentBannerIndex);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        mLvContent.setOnRefreshAndLoadMoreListener(new RefreshListView.OnRefreshAndLoadMoreListener() {
+            @Override
+            public void onRefreshing() {
+                isRefresh = true;
+                getDataFromNet(false);
+            }
+
+            @Override
+            public void onLoadingMore() {
+                if (TextUtils.isEmpty(mLoadMoreDataUrl)){
+                    Toast.makeText(mainActivity, "没有更多数据！", Toast.LENGTH_SHORT).show();
+                    mLvContent.refreshFinish();
+                }else {
+                    Toast.makeText(mainActivity, "加载更多数据...", Toast.LENGTH_SHORT).show();
+                    getDataFromNet(true);
+                    mLvContent.refreshFinish();
+                }
+
+            }
+        });
     }
 
     private void initNewsListView() {
@@ -166,7 +214,12 @@ public class PageTagNewsNewsCenterPage {
      */
     private PageTagNewsData parseJsonData(String jsonData) {
         // 解析json数据
-        return mGson.fromJson(jsonData, PageTagNewsData.class);
+        PageTagNewsData pageTagNewsData = mGson.fromJson(jsonData, PageTagNewsData.class);
+        String more = pageTagNewsData.data.more;
+        if (!TextUtils.isEmpty(more)) {
+            mLoadMoreDataUrl = AppConst.NEWS_CENTER_URL + more;
+        }
+        return pageTagNewsData;
     }
 
     /**
@@ -180,7 +233,7 @@ public class PageTagNewsNewsCenterPage {
         initPoints();
 
         // 设置轮播图的标题和选中的点
-        setBannerImageTitleAndSelectPoint(0);
+        setBannerImageTitleAndSelectPoint(mCurrentBannerIndex);
 
         // 轮播图自动轮播的处理
         bannerAutoScrollProcess();
@@ -197,6 +250,11 @@ public class PageTagNewsNewsCenterPage {
     }
 
     private void bannerAutoScrollProcess() {
+        if (mHandler == null) {
+            mHandler = new Handler(Looper.getMainLooper());
+        }
+        //清空掉原来所有的任务
+        mHandler.removeCallbacksAndMessages(null);
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -253,7 +311,7 @@ public class PageTagNewsNewsCenterPage {
         mBannerAdapter.notifyDataSetChanged();
     }
 
-    private void getDataFromNet() {
+    private void getDataFromNet(boolean isLoadMore) {
         RequestParams params = new RequestParams("https://www.baidu.com/s");
         params.setMethod(HttpMethod.GET);
         x.http().get(params, new Callback.CommonCallback<String>() {
@@ -390,45 +448,33 @@ public class PageTagNewsNewsCenterPage {
                 // 保存数据到本地
                 SharedPUtil.setString(mainActivity, AppConst.NEWSNEWSCENTERCACHE, testJson);
                 // 解析数据
-                parseJsonData(testJson);
+                PageTagNewsData pageTagNewsData = parseJsonData(testJson);
+                processData(pageTagNewsData);
+                if (isRefresh) {
+                    mLvContent.refreshFinish();
+                    Toast.makeText(mainActivity, "刷新数据成功!", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 // 请求失败
+                if (isRefresh) {
+                    mLvContent.refreshFinish();
+                    Toast.makeText(mainActivity, "刷新数据失败!", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onCancelled(CancelledException cex) {
-
+                if (isRefresh) {
+                    mLvContent.refreshFinish();
+                    Toast.makeText(mainActivity, "刷新数据取...!", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onFinished() {
-
-            }
-        });
-    }
-
-    private void initEvent() {
-        mVpBanner.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            /**
-             * 停留到的页面
-             * @param position ...
-             */
-            @Override
-            public void onPageSelected(int position) {
-                setBannerImageTitleAndSelectPoint(position);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
             }
         });
     }

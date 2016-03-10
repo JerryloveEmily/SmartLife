@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.jerry.refreshviewlibrary.listview.RefreshListView;
 import com.jerry.smartlife.R;
 import com.jerry.smartlife.activity.MainActivity;
 import com.jerry.smartlife.app.AppConst;
@@ -23,7 +24,6 @@ import com.jerry.smartlife.utils.DensityUtil;
 import com.jerry.smartlife.utils.SharedPUtil;
 import com.jerry.smartlife.utils.quickadapter.BaseAdapterHelper;
 import com.jerry.smartlife.utils.quickadapter.QuickAdapter;
-import com.jerry.smartlife.view.listview.RefreshListView;
 import com.jerry.smartlife.view.viewpager.scroller.ViewPagerScroller;
 
 import org.xutils.common.Callback;
@@ -104,6 +104,8 @@ public class PageTagNewsNewsCenterPage {
         mLLPoints = (LinearLayout) mBannerView.findViewById(R.id.ll_points);
         // 把轮播图添加到listview中
         mLvContent.setIsPullRefreshHeaderEnable(true);
+        mLvContent.setIsLoadMoreFooterEnable(true);
+        // 把banner轮播图当做一个listview的header加入到listview中
         mLvContent.addHeaderView(mBannerView);
     }
 

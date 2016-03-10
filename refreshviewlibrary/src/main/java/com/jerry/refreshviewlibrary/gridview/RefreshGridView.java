@@ -1,4 +1,4 @@
-package com.jerry.smartlife.view.listview;
+package com.jerry.refreshviewlibrary.gridview;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -9,20 +9,20 @@ import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.jerry.smartlife.R;
-import com.jerry.smartlife.utils.JLog;
+import com.jerry.refreshviewlibrary.R;
+import com.jerry.refreshviewlibrary.test.JTestLog;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * 可下拉刷新和加载更多的GridView
  * Created by JerryloveEmily on 16/3/7.
  */
-public class RefreshListView extends ListView {
+public class RefreshGridView extends HeaderGridView {
 
     private LinearLayout mHeaderView;                    // 头部视图
     private TextView mHeaderStateText;               // 头部状态更新文本视图
@@ -45,17 +45,18 @@ public class RefreshListView extends ListView {
     private RotateAnimation mArrowUpAnim;
     private RotateAnimation mArrowDownAnim;
     private boolean isPullRefreshHeaderEnable = false;
+    private boolean isLoadMoreFooterEnable = false;
     private boolean isLoadMore;
 
-    public RefreshListView(Context context) {
+    public RefreshGridView(Context context) {
         this(context, null);
     }
 
-    public RefreshListView(Context context, AttributeSet attrs) {
+    public RefreshGridView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public RefreshListView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RefreshGridView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
         initArrowAnimation();
@@ -71,6 +72,11 @@ public class RefreshListView extends ListView {
         setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (!isLoadMoreFooterEnable) {
+                    //不启用加载更多数据的功能
+                    return;
+                }
+
                 // 当listview滚动停止，并且显示出最后一条的时候，加载更多数据
                 if (getLastVisiblePosition() == getAdapter().getCount() - 1 && !isLoadMore) {
                     // 显示最后一条item的时候，显示出加载更多数据的视图
@@ -169,14 +175,14 @@ public class RefreshListView extends ListView {
     private void refreshState() {
         switch (currentState) {
             case PULL_DOWN:// 下拉刷新
-                JLog.e("下拉刷新...");
+                JTestLog.e("下拉刷新...");
                 mHeaderStateText.setText("下拉刷新");
                 mHeaderArrowView.setVisibility(VISIBLE);
                 mHeaderRefreshView.setVisibility(GONE);
                 mHeaderArrowView.startAnimation(mArrowDownAnim);
                 break;
             case RELEASE_STATE:// 松开刷新
-                JLog.e("松开刷新...");
+                JTestLog.e("松开刷新...");
                 mHeaderStateText.setText("松开刷新");
                 mHeaderArrowView.setVisibility(VISIBLE);
                 mHeaderRefreshView.setVisibility(GONE);
@@ -234,6 +240,10 @@ public class RefreshListView extends ListView {
      * @return true 完全显示
      */
     private boolean isBannerViewFullShow() {
+        if(mBannerView == null){
+            // 当做轮播图已经完全显示了
+            return true;
+        }
         // 判断轮播图是否完整显示，完整显示了才显示下拉刷新
         // 获取listview屏幕中的Y值
         int[] location = new int[2];
@@ -280,7 +290,7 @@ public class RefreshListView extends ListView {
         mFootLayoutHeight = mFooterView.getMeasuredHeight();
         // 向上隐藏尾部布局
         mFooterView.setPadding(0, -mFootLayoutHeight, 0, 0);
-        addFooterView(mFooterView);
+//        addFooterView(mFooterView);
     }
 
     /**
@@ -290,6 +300,14 @@ public class RefreshListView extends ListView {
      */
     public void setIsPullRefreshHeaderEnable(boolean isPullRefreshHeaderEnable) {
         this.isPullRefreshHeaderEnable = isPullRefreshHeaderEnable;
+    }
+
+    /**
+     * 设置是否启用加载更多数据功能
+     * @param isLoadMoreFooterEnable ...
+     */
+    public void setIsLoadMoreFooterEnable(boolean isLoadMoreFooterEnable){
+        this.isLoadMoreFooterEnable = isLoadMoreFooterEnable;
     }
 
     /**

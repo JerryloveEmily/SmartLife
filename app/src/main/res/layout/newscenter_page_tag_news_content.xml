@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.jerry.smartlife.view.listview.RefreshListView
+    <com.jerry.refreshviewlibrary.listview.RefreshListView
         android:id="@+id/lv_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

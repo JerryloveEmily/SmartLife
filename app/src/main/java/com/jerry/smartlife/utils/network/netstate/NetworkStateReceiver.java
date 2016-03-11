@@ -1,4 +1,4 @@
-package com.jerry.smartlife.utils.netstate;
+package com.jerry.smartlife.utils.network.netstate;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

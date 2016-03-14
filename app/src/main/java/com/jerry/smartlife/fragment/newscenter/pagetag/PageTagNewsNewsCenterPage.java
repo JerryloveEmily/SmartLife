@@ -1,5 +1,6 @@
 package com.jerry.smartlife.fragment.newscenter.pagetag;
 
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.view.PagerAdapter;
@@ -13,6 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.signature.EmptySignature;
 import com.google.gson.Gson;
 import com.jerry.refreshviewlibrary.listview.RefreshListView;
 import com.jerry.smartlife.R;
@@ -32,8 +38,10 @@ import org.xutils.http.RequestParams;
 import org.xutils.image.ImageOptions;
 import org.xutils.x;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -159,10 +167,10 @@ public class PageTagNewsNewsCenterPage {
 
             @Override
             public void onLoadingMore() {
-                if (TextUtils.isEmpty(mLoadMoreDataUrl)){
+                if (TextUtils.isEmpty(mLoadMoreDataUrl)) {
                     Toast.makeText(mainActivity, "没有更多数据！", Toast.LENGTH_SHORT).show();
                     mLvContent.refreshFinish();
-                }else {
+                } else {
                     Toast.makeText(mainActivity, "加载更多数据...", Toast.LENGTH_SHORT).show();
                     getDataFromNet(true);
                     mLvContent.refreshFinish();
@@ -179,13 +187,56 @@ public class PageTagNewsNewsCenterPage {
 
             @Override
             protected void convert(BaseAdapterHelper helper, int position,
-                                   PageTagNewsData.NewsContent.ListNewsData item) {
-                ImageView ivThumbnail = helper.getView(R.id.iv_thumbnail);
+                                   final PageTagNewsData.NewsContent.ListNewsData item) {
+                final ImageView ivThumbnail = helper.getView(R.id.iv_thumbnail);
                 // 通过xUtils3框架设置和加载网络图片
-                x.image().bind(ivThumbnail, item.listimage,
+                /*x.image().bind(ivThumbnail, item.listimage,
                         getBannerImageOptions(
                                 DensityUtil.dpToPx(100),
-                                DensityUtil.dpToPx(80)));
+                                DensityUtil.dpToPx(80)));*/
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final File file = getBitmap(item.listimage);
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Glide.with(mainActivity).load(file)
+                                        .asBitmap()
+                                        .centerCrop()
+                                        .placeholder(R.drawable.home_scroll_default)
+                                        .error(R.drawable.home_scroll_default)
+                                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                                        .signature(EmptySignature.obtain())
+                                        .into(new SimpleTarget<Bitmap>(DensityUtil.dpToPx(100),
+                                                DensityUtil.dpToPx(80)) {
+                                            @Override
+                                            public void onResourceReady(Bitmap resource,
+                                                                        GlideAnimation<? super Bitmap> glideAnimation) {
+                                                ivThumbnail.setImageBitmap(resource);
+                                            }
+                                        });
+                            }
+                        });
+                    }
+                }).start();
+
+
+                        /*.asBitmap()
+                        .centerCrop()
+                        .placeholder(R.drawable.home_scroll_default)
+                        .error(R.drawable.home_scroll_default)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .signature(EmptySignature.obtain())
+                        .into(new SimpleTarget<Bitmap>(DensityUtil.dpToPx(100),
+                                DensityUtil.dpToPx(80)) {
+                            @Override
+                            public void onResourceReady(Bitmap resource,
+                                                        GlideAnimation<? super Bitmap> glideAnimation) {
+                                ivThumbnail.setImageBitmap(resource);
+                            }
+                        });*/
+
 
                 // 标题描述
                 TextView tvTitle = helper.getView(R.id.tv_title);
@@ -195,6 +246,26 @@ public class PageTagNewsNewsCenterPage {
                 TextView tvPubDate = helper.getView(R.id.tv_pubdate);
                 tvPubDate.setText(item.pubdate);
             }
+
+            private File getBitmap(final String imgUrl) {
+                try {
+                    File file = Glide.with(mainActivity).load(imgUrl).downloadOnly(-1, -1).get();
+
+                    String s = file.getAbsolutePath();
+                    if (s.endsWith(".0")) {
+                        s = s.replace(".0", ".jpg");
+                        file.renameTo(new File(s));
+                        return new File(s);
+                    } else
+                        return file;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
 
             private ImageOptions getBannerImageOptions(int imageWidth, int imageHeight) {
                 // 设置默认图片
